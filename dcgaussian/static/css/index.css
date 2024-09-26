@@ -31,11 +31,6 @@ body {
 .publication-title {
 }
 
-.conference-title {
-  font-size: 2em; /* Adjust the size as needed */
-  color: gray;
-}
-
 .publication-banner {
   max-height: parent;
 
