@@ -1,0 +1,251 @@
+/* ------------------------------------------------------------------
+   Linhan Wang — personal homepage
+   Layout inspired by jonbarron.info: one column, thumbnail + text rows.
+   ------------------------------------------------------------------ */
+
+:root {
+  --fg:        #1a1a1a;
+  --fg-muted:  #5c5c5c;
+  --fg-faint:  #8a8a8a;
+  --bg:        #ffffff;
+  --link:      #1a5fb4;
+  --link-hover:#e5484d;
+  --rule:      #e6e6e6;
+  --thumb-bg:  #fafafa;
+  --max:       860px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fg:        #e8e8e8;
+    --fg-muted:  #a8a8a8;
+    --fg-faint:  #7d7d7d;
+    --bg:        #16181c;
+    --link:      #78b0ff;
+    --link-hover:#ff8b8f;
+    --rule:      #2c3038;
+    --thumb-bg:  #21242a;
+  }
+}
+
+/* The viewer's theme toggle stamps data-theme on <html>; it must win. */
+:root[data-theme="light"] {
+  --fg: #1a1a1a; --fg-muted: #5c5c5c; --fg-faint: #8a8a8a;
+  --bg: #ffffff; --link: #1a5fb4; --link-hover: #e5484d;
+  --rule: #e6e6e6; --thumb-bg: #fafafa;
+}
+:root[data-theme="dark"] {
+  --fg: #e8e8e8; --fg-muted: #a8a8a8; --fg-faint: #7d7d7d;
+  --bg: #16181c; --link: #78b0ff; --link-hover: #ff8b8f;
+  --rule: #2c3038; --thumb-bg: #21242a;
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue",
+               Arial, "PingFang SC", "Hiragino Sans GB", sans-serif;
+  font-size: 16px;
+  line-height: 1.62;
+}
+
+main {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 3.2rem 1.4rem 4rem;
+}
+
+a {
+  color: var(--link);
+  text-decoration: none;
+}
+a:hover { color: var(--link-hover); text-decoration: underline; }
+
+/* ---------------------------  Header  --------------------------- */
+
+.intro {
+  display: flex;
+  gap: 2.2rem;
+  align-items: flex-start;
+  margin-bottom: 2.6rem;
+}
+
+.intro-text { flex: 1 1 auto; min-width: 0; }
+
+.intro-text h1 {
+  margin: 0 0 .7rem;
+  font-size: 2.1rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.intro-text p { margin: 0 0 .85rem; }
+
+.intro-photo {
+  flex: 0 0 190px;
+  order: 1;
+}
+
+.intro-photo img {
+  width: 190px;
+  height: 190px;
+  object-fit: cover;
+  border-radius: 6px;
+  background: var(--thumb-bg);
+  display: block;
+}
+
+.links {
+  margin-top: 1.1rem;
+  color: var(--fg-faint);
+  font-size: .95rem;
+}
+.links a { white-space: nowrap; }
+
+/* ---------------------------  Sections  --------------------------- */
+
+section { margin-bottom: 2.6rem; }
+
+h2 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .09em;
+  color: var(--fg-muted);
+  margin: 0 0 1rem;
+  padding-bottom: .45rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.note {
+  margin: -.3rem 0 1.3rem;
+  font-size: .88rem;
+  color: var(--fg-faint);
+}
+
+/* ---------------------------  News  --------------------------- */
+
+ul.news, ul.cv-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+ul.news li, ul.cv-list li {
+  display: flex;
+  gap: .9rem;
+  padding: .32rem 0;
+  align-items: baseline;
+}
+
+.date {
+  flex: 0 0 4.9rem;
+  color: var(--fg-faint);
+  font-variant-numeric: tabular-nums;
+  font-size: .9rem;
+}
+
+.item { flex: 1 1 auto; min-width: 0; }
+
+.sub { color: var(--fg-muted); }
+
+/* ---------------------------  Publications  --------------------------- */
+
+.papers { display: flex; flex-direction: column; }
+
+.paper {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  padding: 1.15rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+.paper:last-child { border-bottom: none; }
+
+.thumb {
+  flex: 0 0 230px;
+  display: block;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--thumb-bg);
+  border: 1px solid var(--rule);
+}
+
+.thumb img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform .25s ease;
+}
+a.thumb:hover img { transform: scale(1.04); }
+
+.meta { flex: 1 1 auto; min-width: 0; }
+
+.meta h3 {
+  margin: 0 0 .3rem;
+  font-size: 1.02rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.authors {
+  margin: 0 0 .2rem;
+  font-size: .93rem;
+  color: var(--fg-muted);
+}
+.authors strong { color: var(--fg); font-weight: 600; }
+
+.venue {
+  margin: 0 0 .35rem;
+  font-size: .93rem;
+  color: var(--fg-muted);
+  font-style: italic;
+}
+.venue strong { font-style: normal; }
+
+.star { color: var(--fg-faint); font-style: normal; }
+
+.blurb {
+  margin: .35rem 0 0;
+  font-size: .9rem;
+  color: var(--fg-muted);
+}
+
+.pub-links { margin: 0; font-size: .92rem; color: var(--fg-faint); }
+
+/* ---------------------------  Footer  --------------------------- */
+
+footer {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rule);
+  font-size: .85rem;
+  color: var(--fg-faint);
+}
+footer p { margin: 0; }
+
+/* ---------------------------  Responsive  --------------------------- */
+
+@media (max-width: 680px) {
+  main { padding: 2rem 1.15rem 3rem; }
+
+  .intro {
+    flex-direction: column;
+    gap: 1.3rem;
+    align-items: flex-start;
+  }
+  .intro-photo { order: -1; flex: none; }
+  .intro-photo img { width: 140px; height: 140px; }
+  .intro-text h1 { font-size: 1.8rem; }
+
+  .paper { flex-direction: column; gap: .85rem; }
+  .thumb { flex: none; width: 100%; max-width: 420px; }
+
+  ul.news li, ul.cv-list li { flex-direction: column; gap: 0; }
+  .date { flex: none; }
+}

@@ -1,9 +1,200 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta http-equiv="refresh" content="0; url=https://linhanwang.notion.site">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Linhan Wang</title>
+  <meta name="description" content="Linhan Wang is a Ph.D. student in Computer Science at Virginia Tech, working on embodied AI, world models for self-driving and robotics, and computer vision.">
+  <meta name="author" content="Linhan Wang">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Linhan Wang">
+  <meta property="og:description" content="Ph.D. student in Computer Science at Virginia Tech. Embodied AI, world models for self-driving and robotics, computer vision.">
+  <meta property="og:url" content="https://linhanwang.github.io/">
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚗</text></svg>">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <p>If you are not redirected, <a href="https://linhanwang.notion.site">click here</a>.</p>
+<main>
+
+  <!-- ─────────────────────────  Header  ───────────────────────── -->
+  <header class="intro">
+    <div class="intro-text">
+      <h1>Linhan Wang</h1>
+      <p>
+        I'm a Ph.D. student in <a href="https://cs.vt.edu/">Computer Science</a> at
+        <a href="https://vt.edu/">Virginia Tech</a>, advised by Prof.
+        <a href="https://people.cs.vt.edu/~clu/">Chang-Tien Lu</a>.
+        I most recently spent time at <a href="https://www.xiaopeng.com/en">XPENG</a> as a research
+        intern working on end-to-end autonomous driving.
+      </p>
+      <p>
+        Before starting my Ph.D. I worked for about five years as a software and machine
+        learning engineer — building ML platforms at <a href="https://www.didiglobal.com/">Didi</a>
+        and <a href="https://weibo.com/">Weibo</a>, and low-latency trading systems at a
+        quantitative fund in Beijing. I received my B.S. in Atmospheric and Oceanic Science from
+        the School of Physics at <a href="https://english.pku.edu.cn/">Peking University</a>.
+      </p>
+      <p>
+        My research is on <strong>embodied AI</strong> and <strong>world models for self-driving
+        and robotics</strong>. Along the way I've also worked on neural rendering and 3D Gaussian
+        splatting, and on label-efficient learning for scientific and archival imagery.
+      </p>
+
+      <nav class="links">
+        <a href="mailto:linhan@vt.edu">Email</a> /
+        <a href="Linhan_Wang_CV.pdf">CV</a> /
+        <a href="https://scholar.google.com/citations?user=Zr2Tr3UAAAAJ&amp;hl=en">Google&nbsp;Scholar</a> /
+        <a href="https://github.com/linhanwang">GitHub</a> /
+        <a href="https://www.linkedin.com/in/linhan-wang-a663b9139/">LinkedIn</a>
+      </nav>
+    </div>
+
+    <div class="intro-photo">
+      <img src="images/profile.jpg" alt="Linhan Wang">
+    </div>
+  </header>
+
+  <!-- ─────────────────────────  News  ───────────────────────── -->
+  <section>
+    <h2>News</h2>
+    <ul class="news">
+      <li><span class="date">2026</span><span class="item">Awarded the <strong>Pratt Fellowship</strong>, Department of Computer Science, Virginia Tech (2026–27 academic year).</span></li>
+      <li><span class="date">2026</span><span class="item"><em>SemiETPicker</em> accepted to <strong>IEEE ISBI 2026</strong> (London, April 2026).</span></li>
+      <li><span class="date">2025</span><span class="item">Research intern at <strong>XPENG</strong> (May–Nov 2025), working on end-to-end autonomous driving.</span></li>
+      <li><span class="date">2025</span><span class="item">Won a <strong>Silver Medal</strong> (34th of 931) in the <a href="https://www.kaggle.com/competitions/czii-cryo-et-object-identification">CZII CryoET Object Identification</a> challenge on Kaggle.</span></li>
+      <li><span class="date">2025</span><span class="item"><em>KHAIT</em> accepted to <strong>ACM IUI 2025</strong>.</span></li>
+      <li><span class="date">2024</span><span class="item"><em>DC-Gaussian</em> accepted to <strong>NeurIPS 2024</strong> (Vancouver, December 2024).</span></li>
+    </ul>
+  </section>
+
+  <!-- ─────────────────────────  Publications  ───────────────────────── -->
+  <section>
+    <h2>Selected Publications</h2>
+    <p class="note">* denotes work under review. For the full list, see my
+      <a href="https://scholar.google.com/citations?user=Zr2Tr3UAAAAJ&amp;hl=en">Google&nbsp;Scholar</a>
+      or <a href="Linhan_Wang_CV.pdf">CV</a>.</p>
+
+    <div class="papers">
+
+      <article class="paper">
+        <a class="thumb" href="https://arxiv.org/abs/2601.22032"><img src="images/drive-jepa.jpg" alt="Drive-JEPA architecture overview"></a>
+        <div class="meta">
+          <h3>Drive-JEPA: Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving</h3>
+          <p class="authors"><strong>Linhan Wang</strong>, Zichong Yang, Guoxiang Zhang, Xiaotong Liu, Xiaoyin Zheng, Xiao-Xiao Long, Chang-Tien Lu, Chen Bai</p>
+          <p class="venue">Under review, 2026 <span class="star">*</span></p>
+          <p class="pub-links">
+            <a href="https://arxiv.org/abs/2601.22032">arXiv</a> /
+            <a href="https://github.com/linhanwang/Drive-JEPA">Code</a> /
+            <a href="https://huggingface.co/datasets/LinhanWang/Drive-JEPA">Dataset</a>
+          </p>
+          <p class="blurb">Self-supervised V-JEPA pretraining on curated driving video, plus simulator-scored pseudo-teacher trajectories: 93.3 PDMS on NAVSIM v1 and 87.8 EPDMS on v2.</p>
+        </div>
+      </article>
+
+      <article class="paper">
+        <a class="thumb"><img src="images/hist-photos.jpg" alt="Recall-oriented VLM tagging pipeline"></a>
+        <div class="meta">
+          <h3>Learning Subject Tags from Incomplete Labels: A Recall-Oriented VLM Pipeline for Historical Photographs</h3>
+          <p class="authors"><strong>Linhan Wang</strong>, Meizi Song, Shengkun Wang, Chang-Tien Lu, Yinlin Chen</p>
+          <p class="venue">Under review, 2026 <span class="star">*</span></p>
+          <p class="blurb">Order-invariant SFT, recall-oriented GRPO, and test-time self-consistency turn missing-not-at-random curator tags into a usable supervision signal for archival photo cataloging.</p>
+        </div>
+      </article>
+
+      <article class="paper">
+        <a class="thumb" href="https://arxiv.org/abs/2510.22454"><img src="images/semietpicker.jpg" alt="SemiETPicker teacher-student framework"></a>
+        <div class="meta">
+          <h3>SemiETPicker: Fast and Label-Efficient Particle Picking for CryoET Tomography Using Semi-Supervised Learning</h3>
+          <p class="authors"><strong>Linhan Wang</strong>, Jianwen Dou, Wang Li, Shengkun Wang, Zhiwu Xie, Chang-Tien Lu, Yinlin Chen</p>
+          <p class="venue">IEEE International Symposium on Biomedical Imaging (<strong>ISBI</strong>), 2026</p>
+          <p class="pub-links">
+            <a href="https://arxiv.org/abs/2510.22454">arXiv</a>
+          </p>
+        </div>
+      </article>
+
+      <article class="paper">
+        <a class="thumb" href="https://arxiv.org/abs/2503.15524"><img src="images/khait.jpg" alt="KHAIT urban search and rescue site"></a>
+        <div class="meta">
+          <h3>KHAIT: K-9 Handler Artificial Intelligence Teaming for Collaborative Sensemaking</h3>
+          <p class="authors">Matthew Wilchek, <strong>Linhan Wang</strong>, Sally Dickinson, Erica Feuerbacher, Kurt Luther, Feras A. Batarseh</p>
+          <p class="venue">ACM Conference on Intelligent User Interfaces (<strong>IUI</strong>), 2025</p>
+          <p class="pub-links">
+            <a href="https://arxiv.org/abs/2503.15524">arXiv</a> /
+            <a href="https://dl.acm.org/doi/10.1145/3708359.3712107">ACM DL</a>
+          </p>
+        </div>
+      </article>
+
+      <article class="paper">
+        <a class="thumb" href="dcgaussian/"><img src="images/dc-gaussian.jpg" alt="DC-Gaussian dash cam reflection removal"></a>
+        <div class="meta">
+          <h3>DC-Gaussian: Improving 3D Gaussian Splatting for Reflective Dash Cam Videos</h3>
+          <p class="authors"><strong>Linhan Wang</strong>, Kai Cheng, Shuo Lei, Shengkun Wang, Wei Yin, Chenyang Lei, Xiaoxiao Long, Chang-Tien Lu</p>
+          <p class="venue">Conference on Neural Information Processing Systems (<strong>NeurIPS</strong>), 2024</p>
+          <p class="pub-links">
+            <a href="dcgaussian/">Project page</a> /
+            <a href="https://arxiv.org/abs/2405.17705">arXiv</a> /
+            <a href="https://github.com/linhanwang/DC-Gaussian">Code</a>
+          </p>
+        </div>
+      </article>
+
+      <article class="paper">
+        <a class="thumb" href="https://arxiv.org/abs/2309.05840"><img src="images/sccnet.jpg" alt="SCCNet self- and cross-correlation pipeline"></a>
+        <div class="meta">
+          <h3>Self-Correlation and Cross-Correlation Learning for Few-Shot Remote Sensing Image Semantic Segmentation</h3>
+          <p class="authors"><strong>Linhan Wang</strong>, Shuo Lei, Jianfeng He, Shengkun Wang, Min Zhang, Chang-Tien Lu</p>
+          <p class="venue">ACM SIGSPATIAL International Conference on Advances in Geographic Information Systems (<strong>SIGSPATIAL</strong>), 2023</p>
+          <p class="pub-links">
+            <a href="https://arxiv.org/abs/2309.05840">arXiv</a> /
+            <a href="https://dl.acm.org/doi/10.1145/3589132.3625570">ACM DL</a> /
+            <a href="https://github.com/linhanwang/SCCNet">Code</a>
+          </p>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ─────────────────────────  Experience  ───────────────────────── -->
+  <section>
+    <h2>Experience</h2>
+    <ul class="cv-list">
+      <li><span class="date">2025</span><span class="item"><strong>Research Intern</strong>, XPENG — end-to-end autonomous driving <span class="sub">(May – Nov 2025)</span></span></li>
+      <li><span class="date">2020–22</span><span class="item"><strong>Low-Latency Trading System R&amp;D Engineer</strong>, Beijing ZhuoShi Private Equity Fund Management</span></li>
+      <li><span class="date">2019–20</span><span class="item"><strong>Software Engineer</strong>, Weibo Corporation — Machine Learning Platform</span></li>
+      <li><span class="date">2018–19</span><span class="item"><strong>Software Engineer</strong>, Didi Global — Machine Learning Platform</span></li>
+      <li><span class="date">2017–18</span><span class="item"><strong>Machine Learning Engineer</strong>, Beijing Wecash Technology</span></li>
+    </ul>
+  </section>
+
+  <!-- ─────────────────────────  Education  ───────────────────────── -->
+  <section>
+    <h2>Education</h2>
+    <ul class="cv-list">
+      <li><span class="date">2023–</span><span class="item"><strong>Ph.D. in Computer Science</strong>, Virginia Tech <span class="sub">— advised by Prof. Chang-Tien Lu</span></span></li>
+      <li><span class="date">2016</span><span class="item"><strong>Visiting Student &amp; Research Assistant</strong>, University of California, Los Angeles</span></li>
+      <li><span class="date">2013–17</span><span class="item"><strong>B.S. in Atmospheric and Oceanic Science</strong>, School of Physics, Peking University</span></li>
+    </ul>
+  </section>
+
+  <!-- ─────────────────────────  Awards  ───────────────────────── -->
+  <section>
+    <h2>Awards</h2>
+    <ul class="cv-list">
+      <li><span class="date">2026</span><span class="item">Pratt Fellowship, Department of Computer Science, Virginia Tech (2026–27)</span></li>
+      <li><span class="date">2025</span><span class="item">Silver Medal, <a href="https://www.kaggle.com/competitions/czii-cryo-et-object-identification">CZII CryoET Object Identification</a> (34th of 931)</span></li>
+      <li><span class="date">2016</span><span class="item">First Prize (ranked 1st), Undergraduate Research Contest, Dept. of Atmospheric and Oceanic Science, Peking University</span></li>
+    </ul>
+  </section>
+
+  <footer>
+    <p>Design inspired by <a href="https://jonbarron.info/">Jon Barron</a>'s homepage. Feel free to reuse the source.</p>
+  </footer>
+
+</main>
 </body>
 </html>
