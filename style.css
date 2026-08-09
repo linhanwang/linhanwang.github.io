@@ -218,6 +218,13 @@ a.thumb:hover img { transform: scale(1.04); }
 
 .pub-links { margin: 0; font-size: .92rem; color: var(--fg-faint); }
 
+.gh-stars:not(:empty) {
+  margin-left: .3rem;
+  font-size: .82rem;
+  color: var(--fg-faint);
+  white-space: nowrap;
+}
+
 /* ---------------------------  Footer  --------------------------- */
 
 footer {

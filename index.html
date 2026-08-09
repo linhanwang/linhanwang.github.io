@@ -97,7 +97,7 @@
           <p class="venue">Under review, 2026 <span class="star">*</span></p>
           <p class="pub-links">
             <a href="https://arxiv.org/abs/2601.22032">arXiv</a> /
-            <a href="https://github.com/linhanwang/Drive-JEPA">Code</a> /
+            <a href="https://github.com/linhanwang/Drive-JEPA">Code</a><span class="gh-stars" data-repo="linhanwang/Drive-JEPA"></span> /
             <a href="https://huggingface.co/datasets/LinhanWang/Drive-JEPA">Dataset</a>
           </p>
           <p class="blurb">Self-supervised V-JEPA pretraining on curated driving video, plus simulator-scored pseudo-teacher trajectories: 93.3 PDMS on NAVSIM v1 and 87.8 EPDMS on v2.</p>
@@ -161,7 +161,7 @@
           <p class="pub-links">
             <a href="dcgaussian/">Project page</a> /
             <a href="https://arxiv.org/abs/2405.17705">arXiv</a> /
-            <a href="https://github.com/linhanwang/DC-Gaussian">Code</a>
+            <a href="https://github.com/linhanwang/DC-Gaussian">Code</a><span class="gh-stars" data-repo="linhanwang/DC-Gaussian"></span>
           </p>
         </div>
       </article>
@@ -175,7 +175,7 @@
           <p class="pub-links">
             <a href="https://arxiv.org/abs/2309.05840">arXiv</a> /
             <a href="https://dl.acm.org/doi/10.1145/3589132.3625570">ACM DL</a> /
-            <a href="https://github.com/linhanwang/SCCNet">Code</a>
+            <a href="https://github.com/linhanwang/SCCNet">Code</a><span class="gh-stars" data-repo="linhanwang/SCCNet"></span>
           </p>
         </div>
       </article>
@@ -220,5 +220,18 @@
   </footer>
 
 </main>
+
+<script>
+  document.querySelectorAll('.gh-stars[data-repo]').forEach(function (el) {
+    fetch('https://api.github.com/repos/' + el.dataset.repo)
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+      .then(function (repo) {
+        if (typeof repo.stargazers_count === 'number') {
+          el.textContent = '★ ' + repo.stargazers_count;
+        }
+      })
+      .catch(function () { /* leave the span empty */ });
+  });
+</script>
 </body>
 </html>
