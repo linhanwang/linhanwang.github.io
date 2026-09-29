@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GlanceWAM</title>
+  <meta name="description" content="GlanceWAM: Sparse Test-Time Imagination for World-Action Models. Asynchronous latent lookahead on one video DiT: 72.2% on RoboCasa kitchen, 99.0% on LIBERO, 48 ms per action chunk.">
+  <meta name="author" content="Linhan Wang">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="GlanceWAM: Sparse Test-Time Imagination for World-Action Models">
+  <meta property="og:description" content="Glance slowly, act fast: asynchronous latent lookahead for real-time world-action models.">
+  <meta property="og:url" content="https://linhanwang.github.io/glancewam/">
+  <meta property="og:image" content="https://linhanwang.github.io/glancewam/static/images/fig_teaser_v10.png">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+  <style>
+    :root {
+      --fg: #1a1a1a; --fg-muted: #5c5c5c; --fg-faint: #8a8a8a;
+      --bg: #ffffff; --bg-soft: #f6f7f8;
+      --link: #1a5fb4; --link-hover: #e5484d;
+      --rule: #e6e6e6; --accent: #0e8a6e; --accent-soft: #e7f4f0;
+      --btn-bg: #1a1a1a; --btn-fg: #ffffff;
+      --max: 980px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --fg: #e8e8e8; --fg-muted: #a8a8a8; --fg-faint: #7d7d7d;
+        --bg: #16181c; --bg-soft: #1e2126;
+        --link: #78b0ff; --link-hover: #ff8b8f;
+        --rule: #2c3038; --accent: #4cc3a3; --accent-soft: #19302b;
+        --btn-bg: #e8e8e8; --btn-fg: #16181c;
+      }
+    }
+    :root[data-theme="dark"] {
+      --fg: #e8e8e8; --fg-muted: #a8a8a8; --fg-faint: #7d7d7d;
+      --bg: #16181c; --bg-soft: #1e2126;
+      --link: #78b0ff; --link-hover: #ff8b8f;
+      --rule: #2c3038; --accent: #4cc3a3; --accent-soft: #19302b;
+      --btn-bg: #e8e8e8; --btn-fg: #16181c;
+    }
+
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    a { color: var(--link); text-decoration: none; }
+    a:hover { color: var(--link-hover); }
+    .wrap { max-width: var(--max); margin: 0 auto; padding: 0 16px; }
+
+    /* ---------- header ---------- */
+    header.wrap { padding-top: 56px; padding-bottom: 28px; text-align: center; }
+    h1 {
+      font-size: clamp(1.6rem, 4.2vw, 2.5rem);
+      line-height: 1.2;
+      margin: 0 0 18px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+    h1 .name { color: var(--accent); }
+    .authors { font-size: 1.02rem; margin: 0 auto 6px; max-width: 820px; }
+    .authors span { white-space: nowrap; margin: 0 6px; }
+    .authors sup, .affils sup { font-size: 0.7em; }
+    .affils { color: var(--fg-muted); font-size: 0.95rem; margin: 0 0 16px; }
+    .affils span { white-space: nowrap; margin: 0 8px; }
+    .badge {
+      display: inline-block;
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-radius: 999px;
+      padding: 4px 14px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin: 0 0 22px;
+    }
+    .buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--btn-bg); color: var(--btn-fg);
+      padding: 8px 18px; border-radius: 999px;
+      font-size: 0.95rem; font-weight: 600;
+    }
+    .btn:hover { color: var(--btn-fg); opacity: 0.85; }
+    .btn svg { width: 16px; height: 16px; fill: currentColor; }
+    .btn .emoji { font-size: 1.05rem; line-height: 1; }
+
+    /* ---------- sections ---------- */
+    section { padding: 28px 0; }
+    h2 {
+      font-size: 1.5rem;
+      margin: 0 0 16px;
+      text-align: center;
+      font-weight: 700;
+    }
+    h3 { font-size: 1.1rem; margin: 26px 0 10px; }
+    p { margin: 0 0 14px; }
+    .lead { max-width: 820px; margin: 0 auto 14px; }
+    .center { text-align: center; }
+    .muted { color: var(--fg-muted); }
+    figure { margin: 0 0 8px; }
+    .panel {
+      background: #ffffff;
+      border: 1px solid var(--rule);
+      border-radius: 10px;
+      padding: 14px;
+    }
+    .panel img { display: block; width: 100%; height: auto; }
+    figcaption {
+      color: var(--fg-muted);
+      font-size: 0.92rem;
+      margin: 10px auto 0;
+      max-width: 860px;
+    }
+    .tldr {
+      max-width: 820px;
+      margin: 18px auto 0;
+      font-size: 1.08rem;
+      text-align: center;
+    }
+
+    /* ---------- videos ---------- */
+    .vid-group-title {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--fg-faint);
+      margin: 20px 0 10px;
+      font-weight: 600;
+    }
+    .vid-grid { display: grid; gap: 16px; }
+    .vid-grid.three { grid-template-columns: repeat(3, 1fr); }
+    .vid-grid.two   { grid-template-columns: repeat(2, 1fr); }
+    .vid-card { margin: 0; min-width: 0; }
+    .vid-card video {
+      display: block; width: 100%; height: auto;
+      aspect-ratio: 16 / 9;
+      border-radius: 8px;
+      background: #000;
+    }
+    .vid-card .cap {
+      display: flex; justify-content: space-between; align-items: baseline;
+      gap: 8px; margin-top: 6px; font-size: 0.93rem;
+    }
+    .vid-card .task { font-weight: 600; }
+    .vid-card .sr { color: var(--fg-muted); font-size: 0.85rem; white-space: nowrap; }
+    .vid-card .sr b { color: var(--accent); }
+    .vid-note {
+      text-align: center; color: var(--fg-muted); font-size: 0.9rem; margin-top: 16px;
+    }
+
+    /* ---------- method ---------- */
+    .ideas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 18px; }
+    .idea {
+      background: var(--bg-soft);
+      border: 1px solid var(--rule);
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+    .idea h4 { margin: 0 0 6px; font-size: 1rem; }
+    .idea p { margin: 0; font-size: 0.93rem; color: var(--fg-muted); }
+
+    /* ---------- results ---------- */
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 6px 0 22px; }
+    .stat {
+      text-align: center;
+      border: 1px solid var(--rule);
+      border-radius: 10px;
+      padding: 14px 8px;
+    }
+    .stat .num { font-size: 1.9rem; font-weight: 700; color: var(--accent); line-height: 1.1; }
+    .stat .lbl { font-size: 0.88rem; color: var(--fg-muted); margin-top: 4px; }
+    .table-scroll { overflow-x: auto; }
+    table { border-collapse: collapse; margin: 0 auto; font-size: 0.93rem; }
+    th, td { padding: 6px 14px; text-align: left; border-bottom: 1px solid var(--rule); }
+    th { font-weight: 600; }
+    td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+    tr.ours td { font-weight: 700; color: var(--accent); }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+
+    /* ---------- bibtex ---------- */
+    .bib { position: relative; }
+    pre {
+      background: var(--bg-soft);
+      border: 1px solid var(--rule);
+      border-radius: 10px;
+      padding: 16px;
+      overflow-x: auto;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      margin: 0;
+    }
+    .copy {
+      position: absolute; top: 10px; right: 10px;
+      font: inherit; font-size: 0.8rem;
+      background: var(--bg); color: var(--fg-muted);
+      border: 1px solid var(--rule); border-radius: 6px;
+      padding: 3px 10px; cursor: pointer;
+    }
+    .copy:hover { color: var(--fg); }
+
+    footer.wrap {
+      border-top: 1px solid var(--rule);
+      color: var(--fg-faint);
+      font-size: 0.88rem;
+      text-align: center;
+      padding-top: 22px;
+      padding-bottom: 40px;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 760px) {
+      header.wrap { padding-top: 36px; }
+      .vid-grid.three, .vid-grid.two, .ideas, .two-col { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      th, td { padding: 6px 8px; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="wrap">
+  <h1><span class="name">GlanceWAM</span>: Sparse Test-Time Imagination<br>for World-Action Models</h1>
+
+  <p class="authors">
+    <span><a href="https://linhanwang.github.io/">Linhan Wang</a><sup>1</sup></span>
+    <span>Zijian An<sup>2</sup></span>
+    <span><a href="https://kkhya.github.io/Mingyuan-Zhang.github.io/">Mingyuan Zhang</a><sup>3</sup></span>
+    <span>Chen Dai<sup>1</sup></span>
+    <span><a href="https://colorfulfuture.github.io/">Yi Xu</a><sup>3</sup></span>
+    <span><a href="https://cancui19.github.io/">Can Cui</a><sup>4</sup></span>
+    <span>Jiayan Wang<sup>3</sup></span>
+    <span>Zichong Yang<sup>4</sup></span>
+    <span>Yinlin Chen<sup>1</sup></span>
+    <span><a href="https://lfzhou917.github.io/">Lifeng Zhou</a><sup>2</sup></span>
+    <span><a href="https://people.cs.vt.edu/~ctlu/">Chang-Tien Lu</a><sup>1</sup></span>
+  </p>
+  <p class="affils">
+    <span><sup>1</sup>Virginia Tech</span>
+    <span><sup>2</sup>Drexel University</span>
+    <span><sup>3</sup>Northeastern University</span>
+    <span><sup>4</sup>Purdue University</span>
+  </p>
+
+  <div class="badge">Spotlight &amp; Honorable Mention (Best Paper Award) · RoBoWoMo Workshop @ IROS 2026</div>
+
+  <div class="buttons">
+    <a class="btn" href="https://arxiv.org/abs/2608.23927">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v2H4V4zm0 4h10v2H4V8zm0 4h16v2H4v-2zm0 4h10v2H4v-2z"/></svg>
+      arXiv
+    </a>
+    <a class="btn" href="https://github.com/linhanwang/GlanceWAM">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.39-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg>
+      Code
+    </a>
+    <a class="btn" href="https://huggingface.co/datasets/LinhanWang/GlanceWAM">
+      <span class="emoji" aria-hidden="true">🤗</span>
+      Data &amp; Checkpoints
+    </a>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ---------- teaser ---------- -->
+  <section>
+    <figure>
+      <div class="panel"><a href="static/images/fig_teaser_v10.png"><img src="static/images/fig_teaser_v10.png" alt="Synchronous imagination versus sparse lookahead foresight, and RoboCasa kitchen success rates" loading="lazy"></a></div>
+      <figcaption>
+        <b>(a)</b> Existing WAMs either skip test-time foresight or imagine video synchronously with every action chunk.
+        <b>(b)</b> GlanceWAM glances ahead asynchronously to a single latent lookahead frame <i>H<sub>f</sub></i> ≈ 3 s away and reuses it across ≈4 action chunks, each decoded in 48 ms.
+        <b>(c)</b> Success rate on RoboCasa kitchen (24 tasks, demos only).
+      </figcaption>
+    </figure>
+    <p class="tldr"><b>Glance slowly, act fast.</b> GlanceWAM keeps test-time visual imagination but moves it off the control path: a video DiT imagines one lookahead frame seconds ahead in the background, and the action head acts on it in latent space at control rate.</p>
+  </section>
+
+  <!-- ---------- real-robot videos ---------- -->
+  <section id="videos">
+    <h2>Real-Robot Rollouts</h2>
+    <p class="lead center muted">GlanceWAM on the IMETA Y1 platform, trained on 50 teleoperated demonstrations per task. Success rates are over 50 trials per task (GlanceWAM vs. π<sub>0.5</sub>).</p>
+
+    <div class="vid-group-title">Single-arm</div>
+    <div class="vid-grid three">
+      <figure class="vid-card">
+        <video src="static/videos/singlearm_stack_cups.mp4" poster="static/images/poster_singlearm_stack_cups.jpg" muted loop playsinline controls preload="none"></video>
+        <div class="cap"><span class="task">Stack cups</span><span class="sr"><b>94%</b> vs. 78%</span></div>
+      </figure>
+      <figure class="vid-card">
+        <video src="static/videos/singlearm_pick_and_place.mp4" poster="static/images/poster_singlearm_pick_and_place.jpg" muted loop playsinline controls preload="none"></video>
+        <div class="cap"><span class="task">Pick and place</span><span class="sr"><b>58%</b> vs. 72%</span></div>
+      </figure>
+      <figure class="vid-card">
+        <video src="static/videos/singlearm_remove_cup_cap.mp4" poster="static/images/poster_singlearm_remove_cup_cap.jpg" muted loop playsinline controls preload="none"></video>
+        <div class="cap"><span class="task">Remove cup cap</span><span class="sr"><b>88%</b> vs. 68%</span></div>
+      </figure>
+    </div>
+
+    <div class="vid-group-title">Bimanual</div>
+    <div class="vid-grid two">
+      <figure class="vid-card">
+        <video src="static/videos/bimanual_stack_cups.mp4" poster="static/images/poster_bimanual_stack_cups.jpg" muted loop playsinline controls preload="none"></video>
+        <div class="cap"><span class="task">Stack cups</span><span class="sr"><b>84%</b> vs. 66%</span></div>
+      </figure>
+      <figure class="vid-card">
+        <video src="static/videos/bimanual_bowl.mp4" poster="static/images/poster_bimanual_bowl.jpg" muted loop playsinline controls preload="none"></video>
+        <div class="cap"><span class="task">Bowl</span><span class="sr"><b>72%</b> vs. 64%</span></div>
+      </figure>
+    </div>
+
+    <p class="vid-note">Continuous, uncut sessions. Robot rollouts are shown at 4×, human scene resets at 8×; people are masked out.</p>
+  </section>
+
+  <!-- ---------- abstract ---------- -->
+  <section>
+    <h2>Abstract</h2>
+    <p class="lead">
+      Video generative models provide rich physical priors for robot learning, yet existing world-action models (WAMs) face a fundamental trade-off: synchronous video generation at control rate is latency-prohibitive, while abandoning test-time visual imagination sacrifices task success. We show that visual imagination achieves both real-time inference and superior success rates when generated asynchronously off the critical path and consumed directly in latent space. We introduce GlanceWAM, which decouples imagination from control on a single shared video DiT backbone: an asynchronous proposer glances ahead on a slow clock to imagine a single lookahead frame seconds into the future in the background, while an action head decodes action chunks at control rate (48 ms) purely in latent space without blocking. Enabled by a non-interfering attention mask that isolates video representations and staleness-robust horizon training that accommodates asynchronous lookahead aging, GlanceWAM breaks the speed–success dilemma. Trained purely on demonstrations, it attains 72.2% on the 24-task RoboCasa kitchen benchmark (vs. 67.1% for synchronous Cosmos Policy) and 99.0% on LIBERO while cutting per-chunk control latency 24× relative to synchronous world-action models (48 ms on one A100). In single-arm and bimanual real-robot manipulation, it achieves higher average success than π<sub>0.5</sub> without any robot-data pretraining.
+    </p>
+  </section>
+
+  <!-- ---------- method ---------- -->
+  <section>
+    <h2>Method</h2>
+    <figure>
+      <div class="panel"><a href="static/images/fig_framework_v19_crop.png"><img src="static/images/fig_framework_v19_crop.png" alt="GlanceWAM architecture: co-training and asynchronous inference" loading="lazy"></a></div>
+      <figcaption>
+        <b>(a)</b> In co-training, the video DiT predicts the future target <b>x</b><sub><i>t</i>+<i>H<sub>f</sub></i></sub>, while the action head learns inverse dynamics toward a lookahead frame <b>x</b><sub><i>t</i>+<i>u</i></sub> at a random offset <i>u</i> ~ U(0, <i>H<sub>f</sub></i>], so it sees every lookahead age it will meet at deployment.
+        <b>(b)</b> At inference, the lookahead latent is generated asynchronously once per <i>H<sub>f</sub></i> and never decoded; each 0.8 s action chunk reads the held lookahead in 48 ms.
+      </figcaption>
+    </figure>
+    <div class="ideas">
+      <div class="idea">
+        <h4>Asynchronous latent lookahead</h4>
+        <p>The video DiT imagines one frame about 3 s ahead on a slow background clock. The action head decodes 0.8 s action chunks against it in a single 48 ms pass, with no VAE decoding in the loop.</p>
+      </div>
+      <div class="idea">
+        <h4>Non-interfering attention mask</h4>
+        <p>A prefix-LM mask keeps lookahead tokens from contaminating observation encodings. Retraining without it (bidirectional attention) drops RoboCasa success from 71.5% to 47.0%.</p>
+      </div>
+      <div class="idea">
+        <h4>Staleness-robust horizon training</h4>
+        <p>The policy is supervised on lookaheads at random offsets <i>u</i> ~ U(0, <i>H<sub>f</sub></i>], so it stays accurate as a held lookahead ages between refreshes.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------- results ---------- -->
+  <section>
+    <h2>Results</h2>
+    <div class="stats">
+      <div class="stat"><div class="num">72.2%</div><div class="lbl">RoboCasa kitchen<br>24 tasks, 50 demos/task</div></div>
+      <div class="stat"><div class="num">99.0%</div><div class="lbl">LIBERO<br>4-suite average</div></div>
+      <div class="stat"><div class="num">48 ms</div><div class="lbl">per action chunk<br>24× lower latency than synchronous WAMs</div></div>
+      <div class="stat"><div class="num">79.2%</div><div class="lbl">real robot, 5 tasks<br>vs. 69.6% for π<sub>0.5</sub></div></div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <h3>RoboCasa kitchen</h3>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Model</th><th class="num">SR (%)</th><th class="num">Demos/task</th></tr></thead>
+            <tbody>
+              <tr><td>π<sub>0</sub></td><td class="num">62.5</td><td class="num">300</td></tr>
+              <tr><td>Video Policy</td><td class="num">66.0</td><td class="num">300</td></tr>
+              <tr><td>GR00T-N1.5 + HAMLET</td><td class="num">66.4</td><td class="num">300</td></tr>
+              <tr><td>FLARE</td><td class="num">66.4</td><td class="num">300</td></tr>
+              <tr><td>Cosmos Policy</td><td class="num">67.1</td><td class="num">50</td></tr>
+              <tr class="ours"><td>GlanceWAM (ours)</td><td class="num">72.2</td><td class="num">50</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="muted" style="font-size:0.9rem;margin-top:10px;">Held-out scenes, 1,200 episodes. Selected rows; the full table is in the paper.</p>
+      </div>
+      <div>
+        <h3>The lookahead is load-bearing</h3>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>System (RoboCasa kitchen)</th><th class="num">SR (%)</th></tr></thead>
+            <tbody>
+              <tr><td>Plain co-training (no lookahead)</td><td class="num">64.4</td></tr>
+              <tr><td>GlanceWAM, single-layer lookahead</td><td class="num">71.5</td></tr>
+              <tr><td>&nbsp;&nbsp;same checkpoint, lookahead zeroed</td><td class="num">61.6</td></tr>
+              <tr><td>&nbsp;&nbsp;retrained without mask</td><td class="num">47.0</td></tr>
+              <tr class="ours"><td>GlanceWAM, multi-layer (final)</td><td class="num">72.2</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="muted" style="font-size:0.9rem;margin-top:10px;">Zeroing the lookahead at test time drops success below the no-lookahead baseline: the policy relies on it. One sampler step for the lookahead (71.2%) performs on par with ten (71.5%).</p>
+      </div>
+    </div>
+
+    <h3>Real-robot evaluation</h3>
+    <figure>
+      <div class="panel"><a href="static/images/fig_real.png"><img src="static/images/fig_real.png" alt="Real-robot success rates of GlanceWAM, pi0.5 and Fast-WAM on five tasks" loading="lazy"></a></div>
+      <figcaption>Success of GlanceWAM, π<sub>0.5</sub>, and Fast-WAM over 50 trials per task on the IMETA Y1 platform. All policies are fine-tuned on the same 50 demonstrations per task; π<sub>0.5</sub> is additionally pretrained on large-scale robot data, while GlanceWAM starts from an internet video prior.</figcaption>
+    </figure>
+
+    <h3>What the model imagines</h3>
+    <figure>
+      <div class="panel"><a href="static/images/fig_gallery_compact.jpg"><img src="static/images/fig_gallery_compact.jpg" alt="Observation, decoded lookahead, and the real frame 3 seconds later on simulated and real tasks" loading="lazy"></a></div>
+      <figcaption>For each task: the observation <b>o</b><sub><i>t</i></sub>, GlanceWAM's lookahead (decoded to RGB only for display), and the real frame 3 s later. Lookaheads get the target layout right while coarsening texture.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ---------- bibtex ---------- -->
+  <section>
+    <h2>BibTeX</h2>
+    <div class="bib">
+      <button class="copy" type="button" id="copy-bib">Copy</button>
+<pre id="bibtex">@article{wang2026glancewam,
+  title   = {GlanceWAM: Sparse Test-Time Imagination for World-Action Models},
+  author  = {Wang, Linhan and An, Zijian and Zhang, Mingyuan and Dai, Chen and Xu, Yi and
+             Cui, Can and Wang, Jiayan and Yang, Zichong and Chen, Yinlin and Zhou, Lifeng and
+             Lu, Chang-Tien},
+  journal = {arXiv preprint arXiv:2608.23927},
+  year    = {2026}
+}</pre>
+    </div>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  <a href="https://linhanwang.github.io/">Linhan Wang</a> · Code: <a href="https://github.com/linhanwang/GlanceWAM">github.com/linhanwang/GlanceWAM</a>
+</footer>
+
+<script>
+  // Play videos only while they are on screen; they are large and all loop.
+  (function () {
+    var vids = document.querySelectorAll('.vid-card video');
+    if (!('IntersectionObserver' in window)) return;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        var v = e.target;
+        if (e.isIntersecting) {
+          if (v.dataset.userPaused !== '1') {
+            var p = v.play();
+            if (p && p.catch) p.catch(function () {});
+          }
+        } else if (!v.paused) {
+          v.dataset.autoPaused = '1';
+          v.pause();
+        }
+      });
+    }, { threshold: 0.35 });
+    vids.forEach(function (v) {
+      // Remember an explicit pause so scrolling back does not override it.
+      v.addEventListener('pause', function () {
+        if (v.dataset.autoPaused === '1') { v.dataset.autoPaused = ''; return; }
+        v.dataset.userPaused = '1';
+      });
+      v.addEventListener('play', function () { v.dataset.userPaused = ''; });
+      io.observe(v);
+    });
+  })();
+
+  document.getElementById('copy-bib').addEventListener('click', function () {
+    var btn = this;
+    var text = document.getElementById('bibtex').innerText;
+    var done = function () { btn.textContent = 'Copied'; setTimeout(function () { btn.textContent = 'Copy'; }, 1500); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function () {});
+    } else {
+      var ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); done(); } catch (e) {}
+      document.body.removeChild(ta);
+    }
+  });
+</script>
+</body>
+</html>
